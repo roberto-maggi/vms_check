@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # VARS
-OUTPUT=../tmp/ansible_facts.json
-OUTPUT_TMP=../tmp/output_tmp.txt
-OUTPUT_DEF=../output.txt
-LOG=../log.txt
+OUTPUT=tmp/ansible_facts.json
+OUTPUT_TMP=tmp/output_tmp.txt
+OUTPUT_DEF=output.txt
+LOG=./log.txt
 SW=("httpd" "tomcat" "wildfly" "docker" "postgresql.x86_64" "mysql" "mongodb")
 SW_FS=("CYBGRDROGRW"1)
 CYBERARK_USR=
@@ -13,19 +13,26 @@ YUM=/usr/bin/yum
 AWK=/usr/bin/awk
 EGREP=/usr/bin/egrep
 
-# CHECK
-[ ! -e $OUTPUT ] || echo "manca il file $OUTPUT" >> $LOG ; exit 1
 
+# tabula rasa
+rm -f $LOG $OUTPUT_DEF $OUTPUT_TMP
+# CHECK
+#[ ! -f "$OUTPUT" ] || echo "manca il file $OUTPUT" >> $LOG ; pwd >> $LOG; exit 1
+[ -f "$OUTPUT" ] || echo "c è il file $OUTPUT" >> $LOG ; pwd >> $LOG
 # PARSING
-echo -e "inizio il check";
-for PIECE_OF_SW in "${SW[@]}";
+echo -e $(date) >> $LOG
+echo -e " inizio il check" >> $LOG
+
+for PIECE_OF_SW in ${SW[@]};
     do
-        if [ -e ${SW[$PIECE_OF_SW]}]; then
-                local PROG=$($YUM list installed | $AWK '{print $1}' | $EGREP x86_64 |$EGREP -i ${SW[$PIECE_OF_SW]})
-                echo -e $PROG >> $OUTPUT_TMP
-                echo -e "trovato $PROG"
+        local PROG=$($YUM list installed | $AWK '{print $1}' | $EGREP x86_64 |$EGREP -i $PIECE_OF_SW)
+        echo -e $PIECE_OF_SW >> $LOG
+        echo -e $PROG >> $OUTPUT_TMP
+        echo -e $PROG >> $LOG
+        if [ $PROG == TRUE ]; then
+            echo -e "trovato -> $PROG">> $LOG
             else
-                echo -e "NON trovato $PROG"
+                echo -e "NON trovato $PROG  >> $LOG "
         fi;
     done
 

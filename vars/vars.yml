@@ -1,2 +1,15 @@
-output: tmp/ansible_facts.json
-parser: scripts/parser.sh
+OUTPUT: tmp/ansible_facts.json
+DEBIAN_INST: tmp/debian_install_out.txt
+REDHAT_INST: tmp/redhat_install_out.txt
+PARSER: scripts/parser.sh
+PKG:
+  - httpd
+  - tomcat
+  - wildfly
+  - docker
+  - postgresql.x86_64
+  - mysql
+  - mongodb
+# uncomment the variable "INSTALL" -> ONLY <- if you want to enable it!!!!!!!
+# when you want to DISABLE it just comment it with "#" 
+#INSTALL: TRUE
