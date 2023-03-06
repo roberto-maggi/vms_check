@@ -1,0 +1,2 @@
+output: tmp/ansible_facts.json
+parser: scripts/parser.sh

@@ -1,0 +1,20 @@
+- name: retrieve facts
+  hosts: base
+  gather_facts: yes
+  become: yes
+  become_method: sudo
+  vars_files: 
+    - vars/vars.yml
+
+
+  tasks:
+  
+  - name: retrieve facts
+    copy:
+      content: "{{ ansible_facts }}"
+      dest: "./{{ OUTPUT }}"
+    delegate_to: localhost
+
+  - name: execute parser
+    shell: "{{ PARSER  }}"
+    delegate_to: localhost
