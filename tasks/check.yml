@@ -1,0 +1,5 @@
+    - name: Check if listed package is installed or not
+      command: "{{SYS.CMD}}" "{{ item }}"
+      loop: "{{ PKG }}"
+      register: "{{SYS.PKG_CHECK}}"
+      when: ansible_facts['os_family'] == "SYS.OS"

@@ -1,6 +1,8 @@
 OUTPUT: tmp/ansible_facts.json
-DEBIAN_INST: tmp/debian_install_out.txt
-REDHAT_INST: tmp/redhat_install_out.txt
+OUTPUT_TMP: tmp/output_tmp.txt
+DEBIAN_INSTALLED: tmp/debian_install_out.txt
+REDHAT_INSTALLED: tmp/redhat_install_out.txt
+OUTPUT_DEF: output.txt
 PARSER: scripts/parser.sh
 PKG:
   - httpd
@@ -10,6 +12,18 @@ PKG:
   - postgresql.x86_64
   - mysql
   - mongodb
+
+CHECKS:
+    OSS:
+      - OS : Debian
+        CMD: dpkg-query -l
+        PKG_CHECK: debian_package_check
+        INSTALLED: "{DEBIAN_INSTALLED}}"
+      - OS : RedHat
+        CMD: rpm -q
+        CHECK: redhat_package_check
+        INSTALLED: "{{REDHAT_INSTALLED}}"
+
 # uncomment the variable "INSTALL" -> ONLY <- if you want to enable it!!!!!!!
 # when you want to DISABLE it just comment it with "#" 
 #INSTALL: TRUE
