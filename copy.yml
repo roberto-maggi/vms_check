@@ -1,0 +1,6 @@
+
+    - name: copy the output to a local file
+      copy:
+        content: "{{ SYS.PKG_CHECK }}"
+        dest: "{{SYS.INSTALLED}}"
+      delegate_to: localhost

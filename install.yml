@@ -1,0 +1,7 @@
+
+    - name: Install package if not present
+      package:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ PKG }}"
+      when: "{{PKG_CHECK}}" is failed and ansible_facts['os_family'] == "{{SYS.OS}}" and INSTALL is defined

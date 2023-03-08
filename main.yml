@@ -8,7 +8,7 @@
 
 
   tasks:
-  
+
   - name: Remove old file(s)
     ansible.builtin.file:
       path: "./{{ OUTPUT }}"
@@ -18,17 +18,64 @@
     copy:
       content: "{{ ansible_facts }}"
       dest: "./{{ OUTPUT }}"
-    delegate_to: localhost 
+    delegate_to: localhost
 
-  - name: Check, Install if needed, Print and Log
-    include_tasks: check.yml install.yml print.yml copy.yml  
-    with_items: "{{CHECKS.OSS}}"
-    loop_control:
-      loop_var: SYS
+  - name: execute parser
+    shell: "{{ PARSER  }}"
+    delegate_to: localhost
+    
+# Debian 
 
-# parsing
-  - name: parse files to human readable form
-    shell: tr , '\n' < "{{REDHAT_INSTALLED}}" | sed 's/"//g' | tee "{{OUTPUT_TMP}}"
+  - name: Debian - Check if listed package is installed or not
+    command: dpkg-query -l "{{ item }}"
+    loop: "{{ PKG }}"
+    register: debian_package_check
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: Debian - Install package if not present
+    ansible.builtin.package:
+      name: "{{ item }}"
+      state: present
+    loop: "{{ PKG }}"
+    when: debian_package_check is failed and ansible_facts['os_family'] == "Debian" and INSTALL is defined
+
+  - name: Debian - Print execution results
+    debug:
+      msg: "Debian Package {{ PKG }} is installed"
+    when: debian_package_check is succeeded
+
+  - name: Debian - copy the output to a local file
+    copy:
+      content: "{{ debian_package_check }}"
+      dest: "{{DEBIAN_INST}}"
+    delegate_to: localhost
+
+# RedHat
+
+  - name: Red Hat - Check if listed package is installed or not
+    command: rpm -q "{{ item }}"
+    loop: "{{ PKG }}"
+    register: redhat_package_check
+    changed_when: false
+    ignore_errors: true
+    when: ansible_facts['os_family'] == "RedHat"
+
+  - name: Red Hat - Install package if not present
+    ansible.builtin.package:
+      name: "{{ item }}"
+      state: present
+    loop: "{{ PKG }}"
+    when: redhat_package_check is failed and ansible_facts['os_family'] == "RedHat" and INSTALL is defined
+
+  - name: Red Hat - Print execution results
+    debug:
+      msg: "RedHat Package {{ PKG }} is installed"
+    when: redhat_package_check is succeeded
+
+  - name: Red Hat - copy the output to a local file
+    copy:
+      content: "{{ redhat_package_check }}"
+      dest: "{{REDHAT_INST}}"
     delegate_to: localhost
 
   #- name: execute parser

@@ -1,5 +1,5 @@
-/media/sf_Documents/vms_check
-Mon 06 Mar 2023 03:55:02 PM CET
+/root/sf_Documents/vms_check
+Wed 08 Mar 2023 04:29:38 PM CET
  inizio il check
 httpd
 

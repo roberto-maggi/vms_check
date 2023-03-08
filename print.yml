@@ -1,0 +1,5 @@
+ 
+    - name: Print execution results
+      debug:
+        msg: "{{SYS.OS}} Package {{ PKG }} is installed"
+      when: "{{SYS.PKG_CHECK}}" is succeeded
